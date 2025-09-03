@@ -5,114 +5,63 @@
   <title>WebAR – Image Tracking (MindAR + A-Frame)</title>
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
 
-<!-- A-Frame (robuste Version für MindAR) -->
-<script src="https://unpkg.com/aframe@1.4.0/dist/aframe.min.js"></script>
-
-<!-- MindAR über unpkg (Alternative zu jsDelivr) -->
-<script src="https://unpkg.com/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-
+  <!-- Stabil bewährte Kombi -->
+  <script src="https://unpkg.com/aframe@1.4.0/dist/aframe.min.js"></script>
+  <script src="https://unpkg.com/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
     :root { color-scheme: dark; }
     html, body { margin:0; height:100%; background:#000; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-    .badge {
-      position: fixed; top: 10px; left: 10px; z-index: 10;
-      background: rgba(0,0,0,.6); color: #fff; padding: 6px 10px; border-radius: 10px; font-size: 12px;
-    }
-    .hud {
-      position: fixed; inset: 0; z-index: 9; pointer-events: none;
-      display: flex; align-items: flex-end; justify-content: center;
-      background: linear-gradient(180deg, rgba(0,0,0,0) 70%, rgba(0,0,0,.55) 100%);
-    }
-    .hud .card {
-      pointer-events: all; margin: 16px; padding: 12px 14px; border-radius: 12px;
-      background: rgba(0,0,0,.65); color:#fff; backdrop-filter: blur(6px);
-    }
-    .hud a { color:#a8d1ff; text-decoration: none; }
-    .btn {
-      display:inline-block; padding:8px 12px; border-radius:10px; background:#111; color:#fff;
-      border:1px solid #333; text-decoration:none;
-    }
-    noscript { position:fixed; inset:0; display:grid; place-items:center; background:#000; color:#fff; z-index:9999; }
+    .badge { position: fixed; top: 10px; left: 10px; z-index: 10; background: rgba(0,0,0,.6); color:#fff; padding:6px 10px; border-radius:10px; font-size:12px; }
+    .hud { position: fixed; inset: 0; z-index: 9; pointer-events: none; display:flex; align-items:flex-end; justify-content:center; background: linear-gradient(180deg, rgba(0,0,0,0) 70%, rgba(0,0,0,.55) 100%); }
+    .hud .card { pointer-events: all; margin:16px; padding:12px 14px; border-radius:12px; background: rgba(0,0,0,.65); color:#fff; backdrop-filter: blur(6px); }
+    .btn { display:inline-block; padding:8px 12px; border-radius:10px; background:#111; color:#fff; border:1px solid #333; text-decoration:none; }
   </style>
 </head>
 <body>
-  <noscript>Bitte JavaScript aktivieren, um WebAR zu nutzen.</noscript>
-
-  <!-- Statusanzeige -->
   <div id="status" class="badge">BOOTING…</div>
 
-  <!-- A-Frame + MindAR Szene -->
-  <a-scene mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/card.mind; autoStart: true;"
-  color-space="sRGB"
-  renderer="colorManagement: true, physicallyCorrectLights: true, antialias: true"
-  vr-mode-ui="enabled: false"
-  device-orientation-permission-ui="enabled: true">
+  <a-scene
+    mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/card.mind; autoStart: true;"
+    color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights: true, antialias: true"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: true">
 
-    <!-- Assets: dein Markerbild (optional) & dein Modell -->
-    <a-assets timeout="60000">
-      <!-- OPTIONAL: Overlay des Markerbilds zum Ausrichten -->
-      <img id="targetImg" src="./targets/target.png">
-      <!-- DEIN MODELL -->
-      <a-asset-item id="model" src="./assets/ground.glb"></a-asset-item>
+    <a-assets timeout="20000">
+      <!-- Markerbild & Demo-Modell NUR über CDN (verhindert 404-Blocker) -->
+      <img id="targetImg" src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/card.png">
+      <a-asset-item id="model" src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/softmind/scene.gltf"></a-asset-item>
     </a-assets>
 
-    <!-- Kamera (MindAR setzt die Videotextur) -->
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-    <!-- Inhalt für Marker #0 -->
     <a-entity mindar-image-target="targetIndex: 0">
-      <!-- Halbtransparentes Overlay deines Markerbilds (zum Debuggen). Kannst du löschen. -->
       <a-plane src="#targetImg" position="0 0 0" width="1" height="0.552" opacity="0.15"></a-plane>
-
-      <!-- DEIN 3D-Modell auf dem Marker -->
-      <a-gltf-model
-        src="#model"
-        position="0 0 0.05"
-        rotation="0 0 0"
-        scale="0.01 0.01 0.01"
+      <a-gltf-model src="#model" position="0 0 0.05" rotation="0 0 0" scale="0.005 0.005 0.005"
         animation="property: position; to: 0 0.08 0.05; dur: 1000; dir: alternate; loop: true; easing: easeInOutQuad">
       </a-gltf-model>
     </a-entity>
   </a-scene>
 
-  <!-- HUD mit Schnellhinweisen & Fallback -->
   <div class="hud">
     <div class="card">
       <div style="font-weight:600; margin-bottom:6px;">Tipps</div>
       <div>• Kamera erlauben. Marker komplett im Bild halten (20–40 cm, mattes Licht).</div>
-      <div>• Marker entspricht genau der Datei, aus der <code>targets.mind</code> kompiliert wurde.</div>
-      <div style="margin-top:8px;">Kein AR? <a class="btn" href="./fallback.html">Fallback-3D-Viewer öffnen</a></div>
+      <div>• Testmarker: <a class="btn" href="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/card-example/card.png" target="_blank">card.png öffnen</a></div>
     </div>
   </div>
 
-  <!-- Status-Events & Fehleranzeigen -->
   <script>
-    (function(){
-      const badge = document.getElementById('status');
-      const scene = document.querySelector('a-scene');
-
-      scene.addEventListener('arReady', () => {
-        badge.textContent = 'AR READY — scanne deinen Marker';
-      });
-
-      scene.addEventListener('arError', (e) => {
-        badge.textContent = 'AR ERROR — ' + (e && e.detail ? e.detail : 'Unbekannter Fehler');
-      });
-
-      // Ziel-spezifische Events (Marker gefunden/verloren)
-      document.addEventListener('DOMContentLoaded', () => {
-        const target = document.querySelector('[mindar-image-target]');
-        if (!target) return;
-        target.addEventListener('targetFound', () => badge.textContent = 'FOUND ✅');
-        target.addEventListener('targetLost',  () => badge.textContent = 'SEARCHING…');
-      });
-
-      // Kleiner Hilfs-Check für HTTPS/localhost
-      if (!(location.protocol === 'https:' || location.hostname === 'localhost')) {
-        badge.textContent = 'HINWEIS: Für Kamera bitte per HTTPS oder localhost öffnen.';
-      }
-    })();
+    const badge = document.getElementById('status');
+    const scene = document.querySelector('a-scene');
+    scene.addEventListener('arReady', () => { badge.textContent = 'AR READY — scanne die card.png'; });
+    scene.addEventListener('arError', e => { badge.textContent = 'AR ERROR — ' + (e && e.detail ? e.detail : 'Unbekannt'); });
+    document.addEventListener('DOMContentLoaded', () => {
+      const t = document.querySelector('[mindar-image-target]');
+      t.addEventListener('targetFound', () => badge.textContent = 'FOUND ✅');
+      t.addEventListener('targetLost',  () => badge.textContent = 'SEARCHING…');
+    });
   </script>
 </body>
 </html>
