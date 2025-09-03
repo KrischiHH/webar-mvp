@@ -40,11 +40,12 @@
   <div id="status" class="badge">BOOTING…</div>
 
   <!-- A-Frame + MindAR Szene -->
-  <a-scene mindar-image="imageTargetSrc: ./targets/targets.mind;"
-    color-space="sRGB"
-    renderer="colorManagement: true, physicallyCorrectLights: true, antialias: true"
-    vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: true">
+  <a-scene
+  mindar-image="imageTargetSrc: ./targets/targets.mind; autoStart: true;"
+  color-space="sRGB"
+  renderer="colorManagement: true, physicallyCorrectLights: true, antialias: true"
+  vr-mode-ui="enabled: false"
+  device-orientation-permission-ui="enabled: true">
 
     <!-- Assets: dein Markerbild (optional) & dein Modell -->
     <a-assets timeout="60000">
